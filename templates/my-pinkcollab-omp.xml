@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Container version="2">
+  <Name>pinkcollab-omp</Name>
+  <Repository>ghcr.io/elmakus/pinkcollab-omp:latest</Repository>
+  <Registry>https://github.com/elmakus/pinkcollab-omp-unraid/pkgs/container/pinkcollab-omp</Registry>
+  <Network>bridge</Network>
+  <MyIP/>
+  <Shell>bash</Shell>
+  <Privileged>false</Privileged>
+  <Support>https://github.com/elmakus/pinkcollab-omp-unraid/issues</Support>
+  <Project>https://github.com/elmakus/pinkcollab-omp-unraid</Project>
+  <Overview>Oh My Pi + PinkCollab Gateway for Android, updated via your own GitHub Container Registry image. Requires a trusted HTTPS reverse proxy for Android.</Overview>
+  <Description>Community integration image of original upstream releases. One container runs OMP and PinkCollab Gateway. The gateway port is unencrypted and intended only for a local HTTPS reverse proxy, never direct Internet exposure.</Description>
+  <Category>Tools:Utilities</Category>
+  <Config Name="HTTP upstream (HTTPS proxy only)" Target="8788" Default="18788" Mode="tcp" Description="Do not expose this plain-HTTP gateway port to the Internet" Type="Port" Display="always" Required="true" Mask="false">18788</Config>
+  <Config Name="OMP settings and history" Target="/home/agent/.omp" Default="/mnt/user/appdata/pinkcollab-omp/omp" Mode="rw" Description="Persistent model auth, settings and conversations" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/pinkcollab-omp/omp</Config>
+  <Config Name="PinkCollab pairing and settings" Target="/home/agent/.pinkcollab" Default="/mnt/user/appdata/pinkcollab-omp/gateway" Mode="rw" Description="Persistent gateway config and paired client secrets" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/pinkcollab-omp/gateway</Config>
+  <Config Name="Workspace" Target="/workspace" Default="/mnt/user/appdata/pinkcollab-omp/workspace" Mode="rw" Description="Projects directory writable by the agent" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/pinkcollab-omp/workspace</Config>
+</Container>
