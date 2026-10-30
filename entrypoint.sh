@@ -2,7 +2,7 @@
 set -eu
 
 # Gateway and OMP run as the same non-root Linux user.
-mkdir -p "$HOME/.omp" "$HOME/.pinkcollab" /workspace
+mkdir -p "$HOME/.omp" "$HOME/.pinkcollab" "$HOME/.local/bin" "$HOME/.local/npm" "$HOME/.config" /workspace
 
 # Initialize without trying to install a systemd service inside Docker.
 if [ ! -f "$HOME/.pinkcollab/config.yaml" ]; then
