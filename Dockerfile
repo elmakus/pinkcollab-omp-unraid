@@ -25,7 +25,10 @@ RUN test -n "$OMP_TAG" && test -n "$PINK_VERSION" \
     && npm install -g --no-audit --no-fund "pinkcollab@$PINK_VERSION" \
     && omp --version && pinkcollab --version
 
-RUN useradd -m -u 1000 -s /bin/bash agent \
+# node:22 already includes user "node" with UID/GID 1000.
+# Rename it to keep the Unraid appdata paths and user consistent.
+RUN usermod -l agent -d /home/agent -m node \
+    && groupmod -n agent node \
     && mkdir -p /workspace /home/agent/.omp /home/agent/.pinkcollab \
     && chown -R agent:agent /workspace /home/agent
 
