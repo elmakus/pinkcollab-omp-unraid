@@ -23,8 +23,10 @@ Node.js 22, **Bun**, oficjalny binarny OMP i PinkCollab Gateway. Python 3 + pip/
 3. Uruchom w terminalu Unraida:
 
 ```sh
-mkdir -p /mnt/user/appdata/pinkcollab-omp/{omp,gateway,workspace}
-chown -R 1000:1000 /mnt/user/appdata/pinkcollab-omp
+mkdir -p /mnt/user/appdata/pinkcollab-omp/{omp,gateway,local,user-config,ssh}
+mkdir -p /mnt/cachedl/omp-workspace
+chown -R 1000:1000 /mnt/user/appdata/pinkcollab-omp /mnt/cachedl/omp-workspace
+chmod 700 /mnt/user/appdata/pinkcollab-omp/ssh
 ```
 
 4. Skopiuj `templates/my-pinkcollab-omp.xml` do `/boot/config/plugins/dockerMan/templates-user/my-pinkcollab-omp.xml`.
@@ -42,7 +44,16 @@ PinkCollab Gateway uruchamia OMP lokalnie na żądanie; w pojedynczym kontenerze
 
 - `/mnt/user/appdata/pinkcollab-omp/omp` → `/home/agent/.omp` (sesje, modele, klucze)
 - `/mnt/user/appdata/pinkcollab-omp/gateway` → `/home/agent/.pinkcollab` (sparowania)
-- `/mnt/user/appdata/pinkcollab-omp/workspace` → `/workspace` (pliki robocze)
+- `/mnt/user/appdata/pinkcollab-omp/local` → `/home/agent/.local` (pakiety i skrypty instalowane przez użytkownika)
+- `/mnt/user/appdata/pinkcollab-omp/user-config` → `/home/agent/.config` (konfiguracje CLI, m.in. GitHub)
+- `/mnt/user/appdata/pinkcollab-omp/ssh` → `/home/agent/.ssh` (klucze SSH i known_hosts, folder prywatny)
+- **`/mnt/cachedl/omp-workspace` → `/workspace` (oddzielne, trwałe pliki robocze na dysku cachedl; nie leżą w appdata)**
+
+### Instalowanie narzędzi przez agenta i trwałość
+
+OMP działa jako nieuprzywilejowany użytkownik UID 1000. Pakiety `npm install -g` lądują dzięki `NPM_CONFIG_PREFIX` w trwałym `~/.local/npm`; własne programy w `~/.local/bin` również pozostają po odtworzeniu kontenera. Programy `gh` zapisują ustawienia w trwałym `~/.config`, a klucze SSH w `~/.ssh`. Biblioteki Pythona instaluj w wirtualnym środowisku, np. `python3 -m venv /workspace/.venv` i potem `/workspace/.venv/bin/python -m pip install <package>`. Dane takiego venv leżą na cachedl, więc również przetrwają update. Nie instaluj bibliotek pip do systemowego Pythona.
+
+**Uwaga:** `apt install`, pliki w `/usr/local` i inne zmiany warstwy kontenera **nie są trwałe**. Jeżeli nowy program potrzebuje uprawnień roota, dodaj go do Dockerfile w tym repozytorium, aby GitHub Actions zbudował i przetestował nowy obraz. Kontener celowo nie ma uprawnień administracyjnych do hosta.
 
 ```sh
 docker exec -it pinkcollab-omp omp
