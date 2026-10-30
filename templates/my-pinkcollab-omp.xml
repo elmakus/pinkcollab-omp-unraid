@@ -13,7 +13,7 @@
   <Description>Community integration image of original upstream releases. One container runs OMP and PinkCollab Gateway. The internal gateway port is reachable only by cloudflared on the shared Docker network ibraproxy. Cloudflare Tunnel provides external HTTPS without publishing a host port.</Description>
   <Category>Tools:Utilities</Category>
   <Icon>https://raw.githubusercontent.com/can1357/oh-my-pi/main/assets/hero.png</Icon>
-  <ExtraParams>--restart=unless-stopped --security-opt=no-new-privileges --cap-drop=ALL</ExtraParams>
+  <ExtraParams>--restart=unless-stopped --security-opt=no-new-privileges --cap-drop=ALL --env-file=/mnt/user/appdata/codex-lb-clean/client-secrets/pi-unraid.env</ExtraParams>
   <TemplateURL>https://raw.githubusercontent.com/elmakus/pinkcollab-omp-unraid/main/templates/my-pinkcollab-omp.xml</TemplateURL>
   <Config Name="Timezone" Target="TZ" Default="Europe/Zurich" Mode="" Description="Local timezone in the container" Type="Variable" Display="always" Required="false" Mask="false">Europe/Zurich</Config>
   <Config Name="Persistent agent home (appdata)" Target="/home/agent" Default="/mnt/user/appdata/pinkcollab-omp" Mode="rw" Description="All OMP sessions, PinkCollab settings, auth, SSH, CLI tools, and future home directories persist in appdata" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/pinkcollab-omp</Config>
