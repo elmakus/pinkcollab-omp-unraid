@@ -12,8 +12,12 @@
   <Overview>Oh My Pi + PinkCollab Gateway for Android, updated via your own GitHub Container Registry image. Requires a trusted HTTPS reverse proxy for Android.</Overview>
   <Description>Community integration image of original upstream releases. One container runs OMP and PinkCollab Gateway. The gateway port is unencrypted and intended only for a local HTTPS reverse proxy, never direct Internet exposure.</Description>
   <Category>Tools:Utilities</Category>
+  <ExtraParams>--restart=unless-stopped --security-opt=no-new-privileges --cap-drop=ALL</ExtraParams>
+  <TemplateURL>https://raw.githubusercontent.com/elmakus/pinkcollab-omp-unraid/main/templates/my-pinkcollab-omp.xml</TemplateURL>
   <Config Name="HTTP upstream (HTTPS proxy only)" Target="8788" Default="18788" Mode="tcp" Description="Do not expose this plain-HTTP gateway port to the Internet" Type="Port" Display="always" Required="true" Mask="false">18788</Config>
   <Config Name="OMP settings and history" Target="/home/agent/.omp" Default="/mnt/user/appdata/pinkcollab-omp/omp" Mode="rw" Description="Persistent model auth, settings and conversations" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/pinkcollab-omp/omp</Config>
   <Config Name="PinkCollab pairing and settings" Target="/home/agent/.pinkcollab" Default="/mnt/user/appdata/pinkcollab-omp/gateway" Mode="rw" Description="Persistent gateway config and paired client secrets" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/pinkcollab-omp/gateway</Config>
-  <Config Name="Workspace" Target="/workspace" Default="/mnt/user/appdata/pinkcollab-omp/workspace" Mode="rw" Description="Projects directory writable by the agent" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/pinkcollab-omp/workspace</Config>
+  <Config Name="Persistent user-installed tools" Target="/home/agent/.local" Default="/mnt/user/appdata/pinkcollab-omp/local" Mode="rw" Description="Programs installed by agent with npm global prefix or in .local/bin survive updates" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/pinkcollab-omp/local</Config>
+  <Config Name="CLI configuration" Target="/home/agent/.config" Default="/mnt/user/appdata/pinkcollab-omp/user-config" Mode="rw" Description="Persistent gh/Git and other application settings" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/pinkcollab-omp/user-config</Config>
+  <Config Name="Workspace on cachedl" Target="/workspace" Default="/mnt/cachedl/omp-workspace" Mode="rw" Description="Separate persistent work directory on cachedl, outside appdata and Unraid mover" Type="Path" Display="always" Required="true" Mask="false">/mnt/cachedl/omp-workspace</Config>
 </Container>
