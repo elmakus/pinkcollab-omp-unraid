@@ -31,11 +31,11 @@ chmod 700 /mnt/user/appdata/pinkcollab-omp/.ssh
 
 4. Skopiuj `templates/my-pinkcollab-omp.xml` do `/boot/config/plugins/dockerMan/templates-user/my-pinkcollab-omp.xml`.
 5. W Docker → Add Container wybierz szablon `pinkcollab-omp`. Obraz: `ghcr.io/elmakus/pinkcollab-omp:latest`.
-6. W istniejącym Cloudflare Tunnel na Unraidzie dodaj trasę **Published application** (Cloudflare Dashboard → Networking → Tunnels → wybierz tunnel → Routes). Proponowany hostname: `pinkcollab.elmakus.uk`. Service URL: **`http://pinkcollab-omp:8788`**. Kontener jest w sieci Docker `ibraproxy`, w której pracuje także `CloudflaredTunnel`, i **nie publikuje portów na hoście**. Nie potrzeba Nginx Proxy Manager ani przekierowania portów na UniFi.
-7. Sprawdź z telefonu przez Internet `https://pinkcollab.elmakus.uk/health` (oczekiwane `pinkcollab:ok`), a następnie sparuj aplikację (użyj faktycznego hostname):
+6. W istniejącym Cloudflare Tunnel na Unraidzie dodaj trasę **Published application** (Cloudflare Dashboard → Networking → Tunnels → wybierz tunnel → Routes). Skonfigurowany hostname: `pinkcollab.makowski.li`. Service URL: **`http://pinkcollab-omp:8788`**. Kontener jest w sieci Docker `ibraproxy`, w której pracuje także `CloudflaredTunnel`, i **nie publikuje portów na hoście**. Nie potrzeba Nginx Proxy Manager ani przekierowania portów na UniFi.
+7. Sprawdź z telefonu przez Internet `https://pinkcollab.makowski.li/health` (oczekiwane `pinkcollab:ok`), a następnie sparuj aplikację (użyj faktycznego hostname):
 
 ```sh
-docker exec -it pinkcollab-omp pinkcollab pair --url https://pinkcollab.elmakus.uk
+docker exec -it pinkcollab-omp pinkcollab pair --url https://pinkcollab.makowski.li
 ```
 
 PinkCollab Gateway uruchamia OMP lokalnie na żądanie; w pojedynczym kontenerze nie potrzebujesz drugiego demona OMP.
