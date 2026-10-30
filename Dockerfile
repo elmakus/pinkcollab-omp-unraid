@@ -55,7 +55,12 @@ RUN usermod -l agent -d /home/agent -m node \
     && chown -R agent:agent /workspace /home/agent
 
 COPY --chmod=755 entrypoint.sh /usr/local/bin/start-pinkcollab
-ENV HOME=/home/agent
+# Persist user-installed programs and CLI credentials across Unraid image updates.
+# System packages (apt) remain managed by Dockerfile builds.
+ENV HOME=/home/agent \
+    NPM_CONFIG_PREFIX=/home/agent/.local/npm \
+    GIT_CONFIG_GLOBAL=/home/agent/.config/gitconfig \
+    PATH=/home/agent/.local/bin:/home/agent/.local/npm/bin:$PATH
 USER agent
 WORKDIR /workspace
 EXPOSE 8788
