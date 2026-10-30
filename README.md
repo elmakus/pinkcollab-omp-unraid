@@ -12,7 +12,9 @@ Po pierwszym udanym buildzie ustaw widoczność pakietu GHCR na **Public**. W Un
 
 ## Co jest w środku
 
-Node.js 22, OMP, PinkCollab Gateway, git, openssh-client, curl, bash, python3, ripgrep, jq, zip/unzip, procps, tmux, socat i dumb-init. Procesy działają pod UID/GID 1000. Kontener ma HEALTHCHECK. Nie ma dostępu do socketu Dockera, pełnej macierzy ani automatycznie skonfigurowanych MCP.
+Node.js 22, **Bun**, oficjalny binarny OMP i PinkCollab Gateway. Python 3 + pip/venv, kompilatory GCC/make, `fd`, `ripgrep`, `git`, `gh`, SSH, `sqlite3`, `jq`, `rsync`, `curl`, `wget`, `zip/unzip`, `tmux`, `socat`, `nano` oraz narzędzia sieciowe `ping`, `ip`, `dig`, `nc`. Dodatkowo gotowe serwery LSP: **TypeScript/JavaScript, Python (Pyright), YAML, Bash, Dockerfile**. Procesy działają pod UID/GID 1000. Kontener ma HEALTHCHECK. Nie ma dostępu do socketu Dockera, pełnej macierzy ani automatycznie skonfigurowanych MCP.
+
+**Nie instalujemy** `ipykernel` (współczesne OMP ma własny kernel Python bez zależności od Jupytera), Rust (nie jest potrzebny do uruchomienia binarnego OMP) ani `iptables` z uprawnieniem NET_ADMIN (nie jest konieczne dla funkcji gatewaya). Przeglądarka Chromium, serwery DAP dla konkretnych języków, pamięć Mnemopi oraz dostęp do SSH/MCP można skonfigurować w zależności od zastosowania. Samo obecne narzędzie `debug`/`lsp` OMP nie gwarantuje działającego adaptera dla każdej technologii.
 
 ## Pierwsze uruchomienie na Unraidzie
 
