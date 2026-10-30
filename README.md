@@ -63,6 +63,18 @@ docker inspect --format '{{.State.Health.Status}}' pinkcollab-omp
 
 Po aktualizacji sesje na dysku pozostają, ale działające zadania zostaną przerwane. Plik z prywatną wiedzą o Twoim środowisku (`AGENTS.md`) trzymaj wyłącznie w wolumenie Unraida, **nigdy w tym publicznym repozytorium**.
 
+## Codex LB jako dostawca modeli (Unraid)
+
+Na serwerze `Tower` kontener `codex-lb-clean` działa w tej samej sieci `ibraproxy` co OMP. Kompatybilne API Responses jest dostępne **wewnątrz sieci Docker** pod `http://codex-lb-clean:2455/v1`.
+
+Indywidualna konfiguracja OMP jest zachowana na Unraidzie w `/mnt/user/appdata/pinkcollab-omp/.omp/agent/models.yml`. Dostawca `codex-lb` wykorzystuje `api: openai-responses`, a klucz bierze z **nazwy zmiennej środowiskowej** `CODEX_LB_API_KEY`, nie z pliku YAML. Skonfigurowane modele: `gpt-6.1-sol`, `gpt-6-astra`, `gpt-6-sol`.
+
+Aby nie wklejać klucza w publicznym repozytorium ani do parametrów Docker CLI, szablon Unraid używa `--env-file` z istniejącym, lokalnym plikiem `/mnt/user/appdata/codex-lb-clean/client-secrets/pi-unraid.env`. Docker odczyta go podczas **ponownego stworzenia kontenera** przez Unraid Docker → pinkcollab-omp → Edit → Apply. Ten konkretny plik ma zmienną `CODEX_LB_API_KEY`; nie jest częścią repozytorium. Nigdy nie dodawaj treści tego pliku do GitHub.
+
+Testy wykonane przed wdrożeniem: `GET /v1/models` zwraca listę modeli przy uwierzytelnieniu; `POST /v1/responses` dla `gpt-6.1-sol` zwróciło HTTP 200 i odpowiedź `OK`. Niezależnie, z kontenera OMP endpoint `http://codex-lb-clean:2455/health` zwraca HTTP 200. Dopóki nie zastosujesz szablonu w panelu Unraid, **obecnie uruchomiony kontener OMP nie ma jeszcze zmiennej z kluczem**, więc nie wysyła żądań uwierzytelnionych.
+
+Dla bardziej szczegółowego podziału uprawnień warto w przyszłości stworzyć w Codex LB **dedykowany klucz** wyłącznie dla OMP, zamiast współdzielić istniejący sekret.
+
 ## Ograniczenia
 
 - To własny obraz łączący oryginalne wydania; nie jest oficjalnym obrazem OMP ani PinkCollab.
