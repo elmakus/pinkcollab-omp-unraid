@@ -15,6 +15,7 @@
   <Icon>https://raw.githubusercontent.com/can1357/oh-my-pi/main/assets/hero.png</Icon>
   <ExtraParams>--restart=unless-stopped --security-opt=no-new-privileges --cap-drop=ALL</ExtraParams>
   <TemplateURL>https://raw.githubusercontent.com/elmakus/pinkcollab-omp-unraid/main/templates/my-pinkcollab-omp.xml</TemplateURL>
+  <Config Name="Timezone" Target="TZ" Default="Europe/Zurich" Mode="" Description="Local timezone in the container" Type="Variable" Display="always" Required="false" Mask="false">Europe/Zurich</Config>
   <Config Name="HTTP upstream (HTTPS proxy only)" Target="8788" Default="18788" Mode="tcp" Description="Do not expose this plain-HTTP gateway port to the Internet" Type="Port" Display="always" Required="true" Mask="false">18788</Config>
   <Config Name="OMP settings and history" Target="/home/agent/.omp" Default="/mnt/user/appdata/pinkcollab-omp/omp" Mode="rw" Description="Persistent model auth, settings and conversations" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/pinkcollab-omp/omp</Config>
   <Config Name="PinkCollab pairing and settings" Target="/home/agent/.pinkcollab" Default="/mnt/user/appdata/pinkcollab-omp/gateway" Mode="rw" Description="Persistent gateway config and paired client secrets" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/pinkcollab-omp/gateway</Config>
