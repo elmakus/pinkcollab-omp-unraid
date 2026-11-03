@@ -88,3 +88,7 @@ Dla bardziej szczegółowego podziału uprawnień warto w przyszłości stworzy�
 - [OMP](https://github.com/can1357/oh-my-pi)
 - [PinkCollab](https://github.com/3xian/PinkCollab)
 - [PinkCollab deployment](https://github.com/3xian/PinkCollab/blob/main/docs/deployment.md)
+
+## Orca Server (Linux + Android)
+
+The same image can run PinkCollab Gateway and Orca Server side by side. See [ORCA-SETUP.md](ORCA-SETUP.md) for LAN/VPN pairing, persistence, security, test commands and rollback.
