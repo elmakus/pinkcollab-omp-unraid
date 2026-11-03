@@ -1,0 +1,4 @@
+.git
+orca.deb
+Dockerfile.stage
+*.log

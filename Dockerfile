@@ -47,6 +47,24 @@ RUN test -n "$OMP_TAG" && test -n "$PINK_VERSION" \
     && command -v bash-language-server \
     && command -v docker-langserver
 
+# Orca headless runtime: fixed upstream version and verified upstream .deb checksum.
+# Extract instead of installing the .deb: keep the same non-root user and Docker process manager.
+ARG ORCA_VERSION=1.4.247
+ARG ORCA_SHA256=7e2c0c879beadd225c48b8d55774cef48b65f9b29ea46c9066db8d204e93e7d1
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgtk-3-0 libnotify4 libnss3 libxss1 libxtst6 xdg-utils \
+    libatspi2.0-0 libuuid1 libsecret-1-0 libasound2 libgbm1 \
+    python3-gi gir1.2-atspi-2.0 at-spi2-core xdotool xclip xvfb supervisor \
+    && rm -rf /var/lib/apt/lists/*
+RUN curl -fL --retry 3 --connect-timeout 20 \
+    -o /tmp/orca.deb \
+    "https://github.com/stablyai/orca/releases/download/v${ORCA_VERSION}/orca-ide_${ORCA_VERSION}_amd64.deb" \
+    && echo "${ORCA_SHA256}  /tmp/orca.deb" | sha256sum -c - \
+    && dpkg-deb -x /tmp/orca.deb / \
+    && rm /tmp/orca.deb \
+    && ln -s /opt/Orca/resources/bin/orca-ide /usr/local/bin/orca-ide \
+    && /usr/local/bin/orca-ide --version
+
 # node:22 already includes user "node" with UID/GID 1000.
 # Rename it to keep the Unraid appdata paths and user consistent.
 RUN usermod -l agent -d /home/agent -m node \
@@ -55,6 +73,9 @@ RUN usermod -l agent -d /home/agent -m node \
     && chown -R agent:agent /workspace /home/agent
 
 COPY --chmod=755 entrypoint.sh /usr/local/bin/start-pinkcollab
+COPY --chmod=755 start-orca.sh /usr/local/bin/start-orca-server
+COPY --chmod=644 supervisord.conf /etc/supervisor/supervisord.conf
+COPY --chmod=644 healthcheck.js /usr/local/bin/healthcheck.js
 # Persist user-installed programs and CLI credentials across Unraid image updates.
 # System packages (apt) remain managed by Dockerfile builds.
 ENV HOME=/home/agent \
@@ -63,9 +84,9 @@ ENV HOME=/home/agent \
     PATH=/home/agent/.local/bin:/home/agent/.local/npm/bin:$PATH
 USER agent
 WORKDIR /workspace
-EXPOSE 8788
+EXPOSE 8788 6768
 
-HEALTHCHECK --interval=30s --timeout=4s --start-period=45s --retries=3 \
-  CMD node -e "require('node:http').get('http://127.0.0.1:8787/health',r=>{r.resume();process.exit(r.statusCode===200?0:1)}).on('error',()=>process.exit(1))"
+HEALTHCHECK --interval=30s --timeout=6s --start-period=90s --retries=3 \
+  CMD ["node", "/usr/local/bin/healthcheck.js"]
 
 ENTRYPOINT ["/usr/bin/dumb-init", "--", "/usr/local/bin/start-pinkcollab"]

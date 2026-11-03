@@ -1,4 +1,4 @@
-name: Build and publish OMP + PinkCollab
+name: Build and publish OMP + PinkCollab + Orca
 
 on:
   workflow_dispatch:
@@ -10,6 +10,9 @@ on:
     paths:
       - Dockerfile
       - entrypoint.sh
+      - start-orca.sh
+      - supervisord.conf
+      - healthcheck.js
       - .github/workflows/publish.yml
 
 permissions:
@@ -28,7 +31,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Validate entrypoint
-        run: sh -n entrypoint.sh
+        run: sh -n entrypoint.sh && sh -n start-orca.sh && node --check healthcheck.js
 
       - name: Discover latest upstream versions
         id: versions
@@ -44,7 +47,7 @@ jobs:
           owner="$(echo "$GITHUB_REPOSITORY_OWNER" | tr '[:upper:]' '[:lower:]')"
           image="ghcr.io/$owner/pinkcollab-omp"
           code_rev="$(echo "$GITHUB_SHA" | cut -c1-12)"
-          version_tag="omp-${omp_tag#v}-pink-${pink_version}-rev-${code_rev}"
+          version_tag="omp-${omp_tag#v}-pink-${pink_version}-orca-1.4.247-rev-${code_rev}"
           {
             echo "omp_tag=$omp_tag"
             echo "pink_version=$pink_version"
@@ -99,10 +102,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          docker run -d --name omp-pink-smoke '${{ steps.versions.outputs.image }}:latest'
+          docker run -d --name omp-pink-smoke -e ORCA_PAIRING_ADDRESS=192.0.2.1 '${{ steps.versions.outputs.image }}:latest'
           trap 'docker logs omp-pink-smoke || true; docker rm -f omp-pink-smoke >/dev/null 2>&1 || true' EXIT
           ready=0
-          for i in $(seq 1 30); do
+          for i in $(seq 1 55); do
             status="$(docker inspect --format '{{.State.Health.Status}}' omp-pink-smoke)"
             if [ "$status" = healthy ]; then ready=1; break; fi
             if [ "$status" = unhealthy ] || [ "$(docker inspect --format '{{.State.Running}}' omp-pink-smoke)" != true ]; then break; fi
@@ -111,7 +114,9 @@ jobs:
           if [ "$ready" -ne 1 ]; then echo 'Gateway never became healthy' >&2; exit 1; fi
           docker exec omp-pink-smoke omp --version
           docker exec omp-pink-smoke pinkcollab --version
-          echo 'Gateway smoke test passed.'
+          docker exec omp-pink-smoke orca-ide --version
+          docker exec omp-pink-smoke node /usr/local/bin/healthcheck.js
+          echo 'PinkCollab + Orca smoke test passed.'
 
       - name: Publish tested image
         if: steps.existing.outputs.skip != 'true'
