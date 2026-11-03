@@ -1,17 +1,13 @@
 #!/bin/sh
 set -eu
 
-# Gateway and OMP run as the same non-root Linux user.
+# Both services execute as UID/GID 1000; their HOME and workspace are persistent volumes.
 mkdir -p "$HOME/.omp" "$HOME/.pinkcollab" "$HOME/.local/bin" "$HOME/.local/npm" "$HOME/.config" "$HOME/.ssh" /workspace
 chmod 700 "$HOME/.ssh"
 
-# Initialize without trying to install a systemd service inside Docker.
+# Keep existing PinkCollab configuration; initialize only on the first boot.
 if [ ! -f "$HOME/.pinkcollab/config.yaml" ]; then
   pinkcollab init --workspace /workspace
 fi
 
-# Gateway binds to loopback:8787. This UNENCRYPTED upstream is only for an
-# HTTPS reverse proxy on a trusted LAN/VPN. NEVER public-port-forward it.
-socat TCP-LISTEN:8788,bind=0.0.0.0,reuseaddr,fork TCP:127.0.0.1:8787 &
-
-exec pinkcollab serve
+exec /usr/bin/supervisord -n -c /etc/supervisor/supervisord.conf
