@@ -13,10 +13,9 @@
   <Description>One non-root container runs original OMP, PinkCollab Gateway and Orca Server with supervised processes and persistent projects. Orca is LAN/VPN only, not a public internet service.</Description>
   <Category>Tools:Utilities</Category>
   <Icon>https://raw.githubusercontent.com/can1357/oh-my-pi/main/assets/hero.png</Icon>
-  <ExtraParams>--hostname=omp-unraid --restart=unless-stopped --security-opt=no-new-privileges --cap-drop=ALL --env-file=/mnt/user/appdata/codex-lb-clean/client-secrets/pi-unraid.env</ExtraParams>
+  <ExtraParams>--hostname=omp-unraid -p 192.168.2.104:6768:6768/tcp --restart=unless-stopped --security-opt=no-new-privileges --cap-drop=ALL --env-file=/mnt/user/appdata/codex-lb-clean/client-secrets/pi-unraid.env</ExtraParams>
   <TemplateURL>https://raw.githubusercontent.com/elmakus/pinkcollab-omp-unraid/main/templates/my-pinkcollab-omp.xml</TemplateURL>
   <Config Name="Orca pairing address (Unraid LAN IP)" Target="ORCA_PAIRING_ADDRESS" Default="192.168.2.104" Mode="" Description="LAN address clients use; access via LAN or UniFi Teleport VPN, never a public port forward" Type="Variable" Display="always" Required="true" Mask="false">192.168.2.104</Config>
-  <Config Name="Orca Server port (private LAN/VPN)" Target="6768" Default="6768" Mode="tcp" Description="WebSocket port for Orca Desktop/Mobile, no router WAN forwarding" Type="Port" Display="always" Required="true" Mask="false">6768</Config>
   <Config Name="Timezone" Target="TZ" Default="Europe/Zurich" Mode="" Description="Local timezone in the container" Type="Variable" Display="always" Required="false" Mask="false">Europe/Zurich</Config>
   <Config Name="Persistent agent home (appdata)" Target="/home/agent" Default="/mnt/user/appdata/pinkcollab-omp" Mode="rw" Description="All OMP sessions, PinkCollab settings, auth, SSH, CLI tools, and future home directories persist in appdata" Type="Path" Display="always" Required="true" Mask="false">/mnt/user/appdata/pinkcollab-omp</Config>
   <Config Name="Workspace on cachedl" Target="/workspace" Default="/mnt/cachedl/omp-workspace" Mode="rw" Description="Separate persistent work directory on cachedl, outside appdata and Unraid mover" Type="Path" Display="always" Required="true" Mask="false">/mnt/cachedl/omp-workspace</Config>
